@@ -4,9 +4,9 @@ export interface GeminiError {
 }
 
 export const MODELS = [
-  { value: "gemini-2.5-flash-preview-05-20", label: "Gemini 2.5 Flash (Free)" },
+  { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Free)" },
   { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" },
-  { value: "gemini-2.5-flash-preview-05-20", label: "Gemini 2.0 Flash Lite" },
+  { value: "gemini-2.5-flash", label: "Gemini 2.0 Flash Lite" },
   { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash" },
 ] as const;
 
@@ -20,7 +20,7 @@ export async function callGemini(
   apiKey: string,
   systemPrompt: string,
   userMessage: string,
-  model: string = "gemini-2.5-flash-preview-05-20"
+  model: string = "gemini-2.5-flash"
 ): Promise<string> {
   const response = await fetch(buildUrl(model, apiKey), {
     method: "POST",
@@ -72,7 +72,7 @@ export async function generateWithKeyRotation(
   apiKeys: string[],
   systemPrompt: string,
   userMessage: string,
-  model: string = "gemini-2.5-flash-preview-05-20"
+  model: string = "gemini-2.5-flash"
 ): Promise<string> {
   if (apiKeys.length === 0) {
     throw new Error("Chưa có API key nào. Vui lòng thêm ít nhất 1 key.");

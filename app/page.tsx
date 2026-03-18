@@ -39,7 +39,7 @@ export default function Home() {
   const [style, setStyle] = useState("action");
   const [ratio, setRatio] = useState("16:9");
   const [language, setLanguage] = useState("vi");
-  const [model, setModel] = useState("gemini-2.5-flash-preview-05-20");
+  const [model, setModel] = useState("gemini-2.5-flash");
 
   // Result
   const [result, setResult] = useState<string | null>(null);
