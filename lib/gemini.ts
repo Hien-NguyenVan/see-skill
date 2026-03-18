@@ -3,15 +3,25 @@ export interface GeminiError {
   message: string;
 }
 
-const GEMINI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+export const MODELS = [
+  { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash Lite (Free)" },
+  { value: "gemini-1.5-flash", label: "Gemini 1.5 Flash (Free)" },
+  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" },
+] as const;
+
+export type ModelId = (typeof MODELS)[number]["value"];
+
+function buildUrl(model: string, apiKey: string) {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+}
 
 export async function callGemini(
   apiKey: string,
   systemPrompt: string,
-  userMessage: string
+  userMessage: string,
+  model: string = "gemini-2.0-flash-lite"
 ): Promise<string> {
-  const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+  const response = await fetch(buildUrl(model, apiKey), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -60,7 +70,8 @@ export async function callGemini(
 export async function generateWithKeyRotation(
   apiKeys: string[],
   systemPrompt: string,
-  userMessage: string
+  userMessage: string,
+  model: string = "gemini-2.0-flash-lite"
 ): Promise<string> {
   if (apiKeys.length === 0) {
     throw new Error("Chưa có API key nào. Vui lòng thêm ít nhất 1 key.");
@@ -70,7 +81,7 @@ export async function generateWithKeyRotation(
 
   for (const key of apiKeys) {
     try {
-      return await callGemini(key, systemPrompt, userMessage);
+      return await callGemini(key, systemPrompt, userMessage, model);
     } catch (err: unknown) {
       const geminiErr = err as GeminiError;
       const status = geminiErr.status || 0;

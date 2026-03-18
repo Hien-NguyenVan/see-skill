@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { generateWithKeyRotation } from "@/lib/gemini";
+import { generateWithKeyRotation, MODELS } from "@/lib/gemini";
 
 const STYLES = [
   { value: "action", label: "Hành động / Chiến đấu / Truy đuổi" },
@@ -39,6 +39,7 @@ export default function Home() {
   const [style, setStyle] = useState("action");
   const [ratio, setRatio] = useState("16:9");
   const [language, setLanguage] = useState("vi");
+  const [model, setModel] = useState("gemini-2.0-flash-lite");
 
   // Result
   const [result, setResult] = useState<string | null>(null);
@@ -151,7 +152,8 @@ export default function Home() {
       const output = await generateWithKeyRotation(
         apiKeys,
         systemPrompt,
-        userMessage
+        userMessage,
+        model
       );
       setResult(output);
     } catch (err: unknown) {
@@ -161,7 +163,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [idea, duration, style, ratio, language, apiKeys, systemPrompt]);
+  }, [idea, duration, style, ratio, language, model, apiKeys, systemPrompt]);
 
   const copyResult = useCallback(() => {
     if (!result) return;
@@ -354,22 +356,41 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Style */}
-          <div>
-            <label className="text-sm text-slate-400 mb-1.5 block">
-              Phong cách
-            </label>
-            <select
-              value={style}
-              onChange={(e) => setStyle(e.target.value)}
-              className="w-full bg-slate-800 rounded-lg px-4 py-2.5 text-sm border border-slate-700 focus:border-violet-500 focus:outline-none transition-colors"
-            >
-              {STYLES.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
+          {/* Style + Model row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm text-slate-400 mb-1.5 block">
+                Phong cách
+              </label>
+              <select
+                value={style}
+                onChange={(e) => setStyle(e.target.value)}
+                className="w-full bg-slate-800 rounded-lg px-4 py-2.5 text-sm border border-slate-700 focus:border-violet-500 focus:outline-none transition-colors"
+              >
+                {STYLES.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm text-slate-400 mb-1.5 block">
+                Model
+              </label>
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="w-full bg-slate-800 rounded-lg px-4 py-2.5 text-sm border border-slate-700 focus:border-violet-500 focus:outline-none transition-colors"
+              >
+                {MODELS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Generate Button */}
